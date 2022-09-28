@@ -9,7 +9,7 @@ use std::ffi::OsStr;
 
 fn main() {
     let books_dir = "/Users/kon3gor/Documents/books";
-    let re = Regex::new(r"[^\\]*\.(pdf|mobi|epub)$").unwrap();
+    let re = Regex::new(r"[^\\]*\.(pdf|epub)$").unwrap();
     iterate_through_dir(books_dir, &re);
 }
 
@@ -32,7 +32,6 @@ fn process_file(origin: &str, file_name: &str) {
     if file_name.starts_with("+") {
         return;
     }
-
 
     let mut original_path = "".to_owned(); 
     original_path.push_str(origin);
