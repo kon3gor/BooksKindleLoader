@@ -7,10 +7,14 @@ use std::env;
 use std::path::Path;
 use std::ffi::OsStr;
 
+const SUPPORTED_FORMATS: &str = "pdf|epub";
+const BOOKS_DIR: &str = "/Users/kon3gor/Documents/books";
+
 fn main() {
-    let books_dir = "/Users/kon3gor/Documents/books";
-    let re = Regex::new(r"[^\\]*\.(pdf|epub)$").unwrap();
-    iterate_through_dir(books_dir, &re);
+    let books_re = format!(r"[^\\]*\.({})$", SUPPORTED_FORMATS);
+    let re = Regex::new(&books_re).unwrap();
+
+    iterate_through_dir(BOOKS_DIR, &re);
 }
 
 fn iterate_through_dir(origin: &str, re: &Regex) {
