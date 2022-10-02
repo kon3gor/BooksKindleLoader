@@ -32,10 +32,10 @@ pub fn load_book_to_kindle(path: &str, env: &BooksEnv) -> Result<(), BooksError>
 }
 
 fn make_attachment(path: &str) -> Result<SinglePart, BooksError> {
-    let filename = match path.split("/").last() {
-        Some(v) => v,
-        None => return Err(BooksError::new("No filename")),
-    };
+    let filename = path
+        .split("/")
+        .last()
+        .ok_or(BooksError::new("No filename"))?;
 
     let filebody = fs::read(path)?;
     let content_type = choose_mime_type(filename)?.parse()?;
@@ -44,10 +44,10 @@ fn make_attachment(path: &str) -> Result<SinglePart, BooksError> {
 }
 
 fn choose_mime_type(file_name: &str) -> Result<&'static str, BooksError> {
-    let ext = match Path::new(file_name).extension().and_then(OsStr::to_str) {
-        Some(v) => v,
-        None => return Err(BooksError::new("No extension")),
-    };
+    let ext = Path::new(file_name)
+        .extension()
+        .and_then(OsStr::to_str)
+        .ok_or(BooksError::new("Noextension"))?;
 
     return match ext {
         "pdf" => Ok("application/pdf"),

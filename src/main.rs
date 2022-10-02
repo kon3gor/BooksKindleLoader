@@ -5,8 +5,8 @@ mod sender;
 use books_env::BooksEnv;
 use error::BooksError;
 use regex::Regex;
-use std::{fs, ffi::OsStr};
 use sender::load_book_to_kindle;
+use std::{ffi::OsStr, fs};
 
 const SUPPORTED_FORMATS: &'static str = "pdf|epub";
 const BOOKS_DIR: &'static str = "/Users/kon3gor/Documents/books";
@@ -31,19 +31,19 @@ fn iterate_through_dir(origin: &str, re: &Regex, env: &BooksEnv) -> Result<(), B
         let path = entry?.path();
 
         let metadata = fs::metadata(&path)?;
-        let file_name = match path.file_name().and_then(OsStr::to_str) {
-            Some(v) => v,
-            None => return Err(BooksError::new("No filename")),
-        };
+        let file_name = path
+            .file_name()
+            .and_then(OsStr::to_str)
+            .ok_or(BooksError::new("No filename"))?;
         if metadata.is_file() && re.is_match(&file_name) {
             match process_file(origin, file_name, env) {
                 Ok(v) => v,
-                Err(e) => return Err(e),
+                Err(e) => eprintln!("Erorr while processing a file: {}", e),
             };
         } else if metadata.is_dir() {
             match iterate_through_dir(&path.display().to_string(), re, env) {
                 Ok(v) => v,
-                Err(e) => return Err(e),
+                Err(e) => eprintln!("Error while iterating through dir: {}", e),
             };
         }
     }
@@ -74,4 +74,3 @@ fn create_string_from_origin(origin: &str, file_name: &str, with_plus: bool) -> 
     built.push_str(file_name);
     return built;
 }
-
