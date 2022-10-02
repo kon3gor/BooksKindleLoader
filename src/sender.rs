@@ -51,7 +51,7 @@ fn choose_mime_type(file_name: &str) -> Result<&'static str, BooksError> {
 
     return match ext {
         "pdf" => Ok("application/pdf"),
-        "mobi" => Ok("application/x-mobipocket-ebook"),
+        "epub" => Ok("application/epub+zip"),
         _ => Err(BooksError::new("Unsupported extension")),
     };
 }
